@@ -1,19 +1,22 @@
-FROM golang:1.21 AS builder
+FROM golang:1.24-bookworm AS builder
 
 WORKDIR /app
 
-COPY ../deployments .
+COPY go.* ./
+RUN go mod download
 
-RUN go mod tidy
+COPY ../ ./
 
-RUN go build -o payments_service .
+RUN go build -v -o server
 
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 
-WORKDIR /app
+RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    ca-certificates && \
+    rm -rf /var/lib/apt/lists/* \
 
-COPY --from=builder /app/payments_service .
+COPY --from=builder /app/server /app/server
 
 EXPOSE 8080
 
-CMD ["/app/payments_service"]
+CMD ["/app/server"]

@@ -3,13 +3,13 @@ version: '3.9'
 services:
   payments_service:
     build:
-      context: ./build/
+      context: ../build/
       dockerfile: app.Dockerfile
     container_name: payments_service
     depends_on:
       - db
     environment:
-      DB_HOST: db
+      DB_HOST: databases
       DB_PORT: 5432
       DB_USER: octoverse
       DB_PASSWORD: secret
@@ -19,17 +19,18 @@ services:
 
   db:
     image: postgres:15
-    container_name: octoverse_db
+    container_name: octoverse_payments_db
     restart: always
     environment:
       POSTGRES_USER: octoverse
       POSTGRES_PASSWORD: secret
-      POSTGRES_DB: payments
+      POSTGRES_DB: postgres
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    network_mode: bridge
 
 volumes:
   pgdata:

@@ -1,13 +1,13 @@
 version: "2"
 sql:
-  - schema: "./internal/db/migrations"
-    queries: "./internal/db/sqlc/"
+  - schema: "./migrations"
+    queries: "./internal/infra/db/queries/"
     engine: "postgresql"
     gen:
       go:
-        package: "db"
+        package: "sqlc"
         sql_package: "pgx/v5"
-        out: "./internal/db/queries"
+        out: "./internal/infra/db/sqlc"
         emit_exact_table_names: true
         emit_empty_slices: true
         emit_exported_queries: true
