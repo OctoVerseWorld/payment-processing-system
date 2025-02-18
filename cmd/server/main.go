@@ -4,8 +4,8 @@ import (
 	"PaymentProcessingSystem/internal"
 	"PaymentProcessingSystem/internal/configs"
 	"PaymentProcessingSystem/internal/infra/db"
-	rest_handlers "PaymentProcessingSystem/internal/infra/rest/handlers"
-	rest_middlewares "PaymentProcessingSystem/internal/infra/rest/middlewares"
+	resthandlers "PaymentProcessingSystem/internal/infra/rest/handlers"
+	restmiddlewares "PaymentProcessingSystem/internal/infra/rest/middlewares"
 	"PaymentProcessingSystem/internal/infra/zap_logger"
 
 	"context"
@@ -64,9 +64,9 @@ func run() (<-chan error, error) {
 		Cfg: cfg.ServerConfig,
 		DB:  pool,
 		Middlewares: []func(http.Handler) http.Handler{
-			rest_middlewares.OTELTraceMiddleware,
-			rest_middlewares.HTTPLoggingMiddleware,
-			rest_middlewares.CurrentUserMiddleware,
+			restmiddlewares.OTELTraceMiddleware,
+			restmiddlewares.HTTPLoggingMiddleware,
+			restmiddlewares.CurrentUserMiddleware,
 		},
 	})
 	if err != nil {
@@ -136,7 +136,7 @@ func newServer(conf mainConfig) (*http.Server, error) {
 
 	//-
 
-	baseHandler := rest_handlers.NewBaseHandler(conf.DB)
+	baseHandler := resthandlers.NewBaseHandler(conf.DB)
 	baseHandler.Register(router)
 
 	//-
